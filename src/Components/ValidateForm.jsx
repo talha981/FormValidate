@@ -34,6 +34,8 @@ function ValidateForm() {
         // Validate inputs
         if (!inputValue.fname.trim()) {
             newErrors.fname = 'First Name is required';
+        } else if(inputValue.fname.length > 8){
+            newErrors.fname = "Name must be less than 8 characters long."
         }
         if (!inputValue.lname.trim()) {
             newErrors.lname = 'Last Name is required';
