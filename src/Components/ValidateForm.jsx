@@ -31,7 +31,7 @@ function ValidateForm() {
             phone:'',
         };
         
-        
+        // Validate inputs
         if (!inputValue.fname.trim()) {
             newErrors.fname = 'First Name is required';
         }
@@ -40,26 +40,30 @@ function ValidateForm() {
         }
         if (!inputValue.email.trim()) {
             newErrors.email = 'Email is required';
+        } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(inputValue.email)) {
+            newErrors.email = 'Email Format is not valid';
         }
         if(!inputValue.phone.trim()){
-            newErrors.phone = "Phone Number is required"
+            newErrors.phone = "Phone Number is required";
         }
 
-        if (newErrors.fname || newErrors.lname) {
+        if (newErrors.fname || newErrors.lname || newErrors.email || newErrors.phone) {
             setErrors(newErrors);
             return; 
         }
 
+        // Create FormData and log it
         const data = new FormData();
         data.append('First Name', inputValue.fname);
         data.append('Last Name', inputValue.lname);
         data.append('Email', inputValue.email);
-        data.append('Phone Number'  , inputValue.phone)
+        data.append('Phone Number', inputValue.phone);
 
         for (let [key, value] of data.entries()) {
             console.log(`${key} : ${value}`);
         }
 
+        // Clear errors
         setErrors({
             fname: '',
             lname: '',
@@ -107,11 +111,10 @@ function ValidateForm() {
                 </div>
 
                 <div className="mb-4">
-                    <label className="block text-gray-700 font-medium mb-1">Phone </label>
+                    <label className="block text-gray-700 font-medium mb-1">Phone</label>
                     <input
                         type="text"
                         name='phone'
-                        id='Phone Number'
                         onChange={handleInput}
                         value={inputValue.phone}
                         className={`w-full px-3 py-2 border ${errors.phone ? 'border-red-500' : 'border-gray-300'} rounded-md shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500`}
@@ -119,7 +122,6 @@ function ValidateForm() {
                     {errors.phone && <p className="text-red-500 text-sm mt-1">{errors.phone}</p>}
                 </div>
 
-                
                 <div className="flex justify-center">
                     <button
                         type="submit"
