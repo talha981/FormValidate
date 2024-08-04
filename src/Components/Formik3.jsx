@@ -11,7 +11,7 @@ function Formik3() {
       age: '',
       phone: '',
       gender: '',
-      checkboxes: [], // Added checkboxes array
+      checkboxes: [], 
     },
     validationSchema: Yup.object({
       fname: Yup.string()
@@ -34,7 +34,7 @@ function Formik3() {
         .min(11, 'Must be at least 11 characters')
         .max(20, 'Must be less than 20 characters'),
       gender: Yup.string().required('Required'),
-      checkboxes: Yup.array().min(1, 'At least one checkbox must be selected'), // Validation for checkboxes
+      checkboxes: Yup.array().min(1, 'At least one checkbox must be selected'), 
     }),
     onSubmit: (values) => {
       const data = new FormData();
@@ -48,13 +48,11 @@ function Formik3() {
         data.append(`Checkbox ${index + 1}`, checkbox);
       });
 
-      // Log the FormData entries
       for (let [key, value] of data.entries()) {
         console.log(`${key} : ${value}`);
       }
 
-      // Here you can send formData to your server
-      // Example: axios.post('/api/submit', formData);
+   
     },
   });
 
