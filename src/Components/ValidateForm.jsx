@@ -30,6 +30,8 @@ function ValidateForm() {
             email: '',
             phone:'',
         };
+        const pattern = /^[a-zA-Z0-9 ]*$/;
+
         
         // Validate inputs
         if (!inputValue.fname.trim()) {
