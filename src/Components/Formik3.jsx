@@ -33,7 +33,8 @@ function Formik3() {
         .required('Required')
         .min(11, 'Must be at least 11 characters')
         .max(20, 'Must be less than 20 characters'),
-      gender: Yup.string().required('Required'),
+      gender: Yup.string()
+      .required('Required'),
       checkboxes: Yup.array().min(1, 'At least one checkbox must be selected'), 
     }),
     onSubmit: (values) => {

@@ -1,8 +1,10 @@
 import React from 'react'
 
-// import ValidateForm from './Components/ValidateForm'
-// import Formik3 from './Components/Formik3'
+import Formik3 from './Components/Formik3'
 import CheckBox from './Components/CheckBox'
+import Counter from './Components/Counter'
+import FormInputs from './Components/ValidateForm/FormInputs'
+import DisplayData from './Components/ValidateForm/DisplayData'
 
 
 function App() {
@@ -10,7 +12,10 @@ function App() {
     <>
 
     {/* <Formik3/> */}
-    <CheckBox/>
+    {/* <CheckBox/> */}
+    {/* <Counter/> */}
+    <FormInputs/>
+    {/* <DisplayData/> */}
     </>
   )
 }
