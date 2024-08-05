@@ -21,6 +21,7 @@ function FormInputs() {
             email: '',
             phone: '',
             gender: '',
+            image: '',
         },
         validationSchema: Yup.object({
             fname: Yup.string()
@@ -37,8 +38,9 @@ function FormInputs() {
             phone: Yup.string()
                 .required('Phone number is Required'),
             gender: Yup.string().required('Required'),
+            image: Yup.mixed().required('Image is Required'),
         }),
-        enableReinitialize: true, 
+        enableReinitialize: true,
         onSubmit: (values, { resetForm }) => {
             if (editingUser) {
                 const updatedUsers = users.map(user =>
@@ -46,13 +48,12 @@ function FormInputs() {
                 );
                 setUsers(updatedUsers);
                 setSuccessMessage('User updated successfully');
-                setEditingUser(null); 
+                setEditingUser(null);
             } else {
                 setUsers((prevUsers) => [...prevUsers, values]);
                 setSuccessMessage('User added successfully');
             }
             resetForm();
-            
             setTimeout(() => {
                 setSuccessMessage('');
             }, 2000);
@@ -65,7 +66,6 @@ function FormInputs() {
         }
         const updatedUsers = users.filter(user => user !== userToDelete);
         setSuccessMessage('User Deleted successfully');
-
         setUsers(updatedUsers);
         setTimeout(() => {
             setSuccessMessage('');
@@ -75,6 +75,18 @@ function FormInputs() {
     const handleEdit = (userToEdit) => {
         setEditingUser(userToEdit);
         formik.setValues(userToEdit);
+    };
+
+    const handleImageChange = (event) => {
+        const file = event.currentTarget.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onloadend = () => {
+                formik.setFieldValue('image', reader.result);
+            };
+            reader.readAsDataURL(file);
+            
+        }
     };
 
     return (
@@ -89,7 +101,22 @@ function FormInputs() {
                             {successMessage}
                         </div>
                     )}
-                    {/* Form fields */}
+                    <div className="mb-4">
+                        <label className="block text-gray-700">Your Image:</label>
+                        <input
+                            type="file"
+                            name="image"
+                            id="image"
+                            onChange={(event) => handleImageChange(event)}
+                            className="w-full mt-1 p-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                        />
+                        {formik.touched.image && formik.errors.image ? (
+                            <div className="text-red-500 text-xs mt-2">{formik.errors.image}</div>
+                        ) : null}
+                        {formik.values.image && (
+                            <img src={formik.values.image} alt="User Image" className="mt-4 h-32 w-32 object-cover rounded-md" />
+                        )}
+                    </div>
                     <div className="mb-4">
                         <label className="block text-gray-700">First Name:</label>
                         <input
@@ -188,6 +215,7 @@ function FormInputs() {
                 <table className="w-full bg-white border border-gray-300 rounded-md shadow-md">
                     <thead className="bg-gray-200">
                         <tr>
+                            <th className="p-4 text-left border-b">Image</th>
                             <th className="p-4 text-left border-b">First Name</th>
                             <th className="p-4 text-left border-b">Last Name</th>
                             <th className="p-4 text-left border-b">Email</th>
@@ -198,22 +226,31 @@ function FormInputs() {
                     </thead>
                     <tbody>
                         {users.map((user, index) => (
-                            <tr key={index} className="border-b">
-                                <td className="p-4">{user.fname}</td>
-                                <td className="p-4">{user.lname}</td>
-                                <td className="p-4">{user.email}</td>
-                                <td className="p-4">{user.phone}</td>
-                                <td className="p-4">{user.gender}</td>
-                                <td className="p-4 text-center">
-                                    <button 
-                                        onClick={() => handleEdit(user)} 
-                                        className="bg-yellow-500 text-white px-4 py-1 rounded-md hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-yellow-500 mr-2"
+                            <tr key={index} className="hover:bg-gray-100">
+                                <td className="p-4 border-b text-center">
+                                    {user.image && (
+                                        <img
+                                            src={user.image}
+                                            alt="User"
+                                            className="h-16 w-16 object-cover rounded-md mx-auto"
+                                        />
+                                    )}
+                                </td>
+                                <td className="p-4 border-b">{user.fname}</td>
+                                <td className="p-4 border-b">{user.lname}</td>
+                                <td className="p-4 border-b">{user.email}</td>
+                                <td className="p-4 border-b">{user.phone}</td>
+                                <td className="p-4 border-b">{user.gender}</td>
+                                <td className="p-4 border-b text-center">
+                                    <button
+                                        className="mr-2 bg-blue-500 text-white px-3 py-1 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                        onClick={() => handleEdit(user)}
                                     >
-                                        Update
+                                        Edit
                                     </button>
-                                    <button 
-                                        onClick={() => handleDelete(user)} 
-                                        className="bg-red-500 text-white px-4 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                    <button
+                                        className="bg-red-500 text-white px-3 py-1 rounded-md hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500"
+                                        onClick={() => handleDelete(user)}
                                     >
                                         Delete
                                     </button>
