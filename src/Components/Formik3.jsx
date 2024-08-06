@@ -1,18 +1,45 @@
-import React from 'react';
+import React, { useReducer } from 'react';
 import { useFormik } from 'formik';
 import * as Yup from 'yup';
 
+// Initial state for the reducer
+const initialState = {
+  fname: '',
+  lname: '',
+  email: '',
+  age: '',
+  phone: '',
+  gender: '',
+  checkboxes: [],
+};
+
+// Reducer function to handle state updates
+const formReducer = (state, action) => {
+  switch (action.type) {
+    case 'SET_FNAME':
+      return { ...state, fname: action.payload };
+    case 'SET_LNAME':
+      return { ...state, lname: action.payload };
+    case 'SET_EMAIL':
+      return { ...state, email: action.payload };
+    case 'SET_AGE':
+      return { ...state, age: action.payload };
+    case 'SET_PHONE':
+      return { ...state, phone: action.payload };
+    case 'SET_GENDER':
+      return { ...state, gender: action.payload };
+    case 'SET_CHECKBOXES':
+      return { ...state, checkboxes: action.payload };
+    default:
+      return state;
+  }
+};
+
 function Formik3() {
+  const [state, dispatch] = useReducer(formReducer, initialState);
+
   const formik = useFormik({
-    initialValues: {
-      fname: '',
-      lname: '',
-      email: '',
-      age: '',
-      phone: '',
-      gender: '',
-      checkboxes: [], 
-    },
+    initialValues: initialState,
     validationSchema: Yup.object({
       fname: Yup.string()
         .required('Required')
@@ -34,8 +61,8 @@ function Formik3() {
         .min(11, 'Must be at least 11 characters')
         .max(20, 'Must be less than 20 characters'),
       gender: Yup.string()
-      .required('Required'),
-      checkboxes: Yup.array().min(1, 'At least one checkbox must be selected'), 
+        .required('Required'),
+      checkboxes: Yup.array().min(1, 'At least one checkbox must be selected'),
     }),
     onSubmit: (values) => {
       const data = new FormData();
@@ -52,19 +79,16 @@ function Formik3() {
       for (let [key, value] of data.entries()) {
         console.log(`${key} : ${value}`);
       }
-
-   
     },
   });
 
   const handleCheckboxChange = (e) => {
     const { value } = e.target;
-    const { checkboxes } = formik.values;
+    const { checkboxes } = state;
     if (checkboxes.includes(value)) {
-      const nextCheckboxes = checkboxes.filter((checkbox) => checkbox !== value);
-      formik.setFieldValue('checkboxes', nextCheckboxes);
+      dispatch({ type: 'SET_CHECKBOXES', payload: checkboxes.filter((checkbox) => checkbox !== value) });
     } else {
-      formik.setFieldValue('checkboxes', [...checkboxes, value]);
+      dispatch({ type: 'SET_CHECKBOXES', payload: [...checkboxes, value] });
     }
   };
 
@@ -79,7 +103,10 @@ function Formik3() {
             name='fname'
             id='fname'
             value={formik.values.fname}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              formik.handleChange(e);
+              dispatch({ type: 'SET_FNAME', payload: e.target.value });
+            }}
             onBlur={formik.handleBlur}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formik.touched.fname && formik.errors.fname ? 'border-red-500' : ''}`}
           />
@@ -95,7 +122,10 @@ function Formik3() {
             name='lname'
             id='lname'
             value={formik.values.lname}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              formik.handleChange(e);
+              dispatch({ type: 'SET_LNAME', payload: e.target.value });
+            }}
             onBlur={formik.handleBlur}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formik.touched.lname && formik.errors.lname ? 'border-red-500' : ''}`}
           />
@@ -111,7 +141,10 @@ function Formik3() {
             name='email'
             id='email'
             value={formik.values.email}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              formik.handleChange(e);
+              dispatch({ type: 'SET_EMAIL', payload: e.target.value });
+            }}
             onBlur={formik.handleBlur}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formik.touched.email && formik.errors.email ? 'border-red-500' : ''}`}
           />
@@ -127,7 +160,10 @@ function Formik3() {
             name='age'
             id='age'
             value={formik.values.age}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              formik.handleChange(e);
+              dispatch({ type: 'SET_AGE', payload: e.target.value });
+            }}
             onBlur={formik.handleBlur}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formik.touched.age && formik.errors.age ? 'border-red-500' : ''}`}
           />
@@ -143,7 +179,10 @@ function Formik3() {
             name='phone'
             id='phone'
             value={formik.values.phone}
-            onChange={formik.handleChange}
+            onChange={(e) => {
+              formik.handleChange(e);
+              dispatch({ type: 'SET_PHONE', payload: e.target.value });
+            }}
             onBlur={formik.handleBlur}
             className={`shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline ${formik.touched.phone && formik.errors.phone ? 'border-red-500' : ''}`}
           />
@@ -158,7 +197,11 @@ function Formik3() {
               type="radio"
               name="gender"
               value="male"
-              onChange={formik.handleChange}
+              checked={formik.values.gender === 'male'}
+              onChange={(e) => {
+                formik.handleChange(e);
+                dispatch({ type: 'SET_GENDER', payload: e.target.value });
+              }}
               onBlur={formik.handleBlur}
               className="form-radio text-indigo-600"
             />
@@ -169,7 +212,11 @@ function Formik3() {
               type="radio"
               name="gender"
               value="female"
-              onChange={formik.handleChange}
+              checked={formik.values.gender === 'female'}
+              onChange={(e) => {
+                formik.handleChange(e);
+                dispatch({ type: 'SET_GENDER', payload: e.target.value });
+              }}
               onBlur={formik.handleBlur}
               className="form-radio text-pink-600"
             />
@@ -184,9 +231,8 @@ function Formik3() {
           <label className="inline-flex items-center">
             <input
               type="checkbox"
-              name="checkboxes"
               value="Option 1"
-              checked={formik.values.checkboxes.includes("Option 1")}
+              checked={state.checkboxes.includes("Option 1")}
               onChange={handleCheckboxChange}
               className="form-checkbox text-blue-600"
             />
@@ -195,9 +241,8 @@ function Formik3() {
           <label className="inline-flex items-center ml-6">
             <input
               type="checkbox"
-              name="checkboxes"
               value="Option 2"
-              checked={formik.values.checkboxes.includes("Option 2")}
+              checked={state.checkboxes.includes("Option 2")}
               onChange={handleCheckboxChange}
               className="form-checkbox text-blue-600"
             />
@@ -206,9 +251,8 @@ function Formik3() {
           <label className="inline-flex items-center ml-6">
             <input
               type="checkbox"
-              name="checkboxes"
               value="Option 3"
-              checked={formik.values.checkboxes.includes("Option 3")}
+              checked={state.checkboxes.includes("Option 3")}
               onChange={handleCheckboxChange}
               className="form-checkbox text-blue-600"
             />
